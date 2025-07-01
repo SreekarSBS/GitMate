@@ -1,14 +1,17 @@
 {
   "name": "devmeet",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "nodemon app.js",
+    
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sreekar SBS",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "mongoose": "^8.16.1"
   }
 }
