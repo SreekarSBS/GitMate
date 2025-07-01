@@ -8,6 +8,28 @@ const User = require("./models/user")
 // We want to fetch the data from the api (POST) through Postman , we need to parse it to JS Object
 app.use(express.json())
 
+
+app.get("/user", async (req,res) => {
+    const userEmailId = req.body.emailId
+try{
+    const userDocument = await User.find({emailId : userEmailId})
+    if(userDocument.length === 0 ) return res.status(404).send("User not found")
+    res.send(userDocument)
+}catch(err){
+    res.status(400).send("Something went wrong")
+}
+})
+
+app.get("/feed", async(req,res) => {
+    try{
+    const allUserDocuments = await User.find({})
+    res.send(allUserDocuments)
+    } catch(err){
+        res.status(400).send("Something went wrong")
+    }
+})
+
+
 app.post("/signup" , async(req , res) => {
      const users = new User(req.body)
     
