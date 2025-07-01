@@ -22,13 +22,47 @@ try{
 
 app.get("/feed", async(req,res) => {
     try{
-    const allUserDocuments = await User.find({})
+    const allUserDocuments = await User.findByIdAndUpdate({})
     res.send(allUserDocuments)
     } catch(err){
         res.status(400).send("Something went wrong")
     }
 })
 
+app.delete("/user", async(req,res) => {
+    try{
+    const userId = req.body.userId;
+    if(!userId) return res.status(400).send("User ID is required")
+    await User.findByIdAndDelete(userId);
+res.send("User deleted successfully")
+    } catch(err) {
+        res.status(400).send("Delete operation failed")
+    }
+})
+
+// app.patch("/user", async(req,res) => {
+//     try{
+//         const userDocument = req.body;
+//         if(!userDocument.userId) return res.status(400).send("User ID is required")
+//         const updatedData = await User.findByIdAndUpdate(userDocument.userId,userDocument);
+//         res.send("User updated successfully ",updatedData)
+//     }   catch(err) {   
+//         res.status(400).send("Update operation failed")
+//     }
+// })
+
+app.patch("/user", async(req,res) => {
+   try {
+    const userDocument = req.body;
+    if(!userDocument.emailId) return res.status(404).send("User not found")
+    const updatedData = await User.findOneAndUpdate({emailId : userDocument.emailId},req.body,{ returnDocument: 'after' })
+    console.log(updatedData);
+    
+    res.send("User updated successfully ", updatedData)
+    } catch(err) {
+        res.status(400).send("Update operation failed")
+    }
+})
 
 app.post("/signup" , async(req , res) => {
      const users = new User(req.body)
