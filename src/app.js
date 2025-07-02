@@ -9,6 +9,8 @@ const User = require("./models/user")
 app.use(express.json())
 
 
+
+
 app.get("/user", async (req,res) => {
     const userEmailId = req.body.emailId
 try{
@@ -51,27 +53,39 @@ res.send("User deleted successfully")
 //     }
 // })
 
-app.patch("/user", async(req,res) => {
+app.patch("/user/:emailId", async(req,res) => {
    try {
     const userDocument = req.body;
-    if(!userDocument.emailId) return res.status(404).send("User not found")
-    const updatedData = await User.findOneAndUpdate({emailId : userDocument.emailId},req.body,{ returnDocument: 'after' })
+    const emailId = req.params?.emailId
+    const ALLOWED_UPDATES = [
+        "firstName",
+        "lastName",
+        "age",
+        'photoURL',
+        'password'
+    ]
+    if(!Object.keys(userDocument).every(k => ALLOWED_UPDATES.includes(k))) throw new Error("Invalid update fields")
+
+
+    if(!emailId) return res.status(404).send("User not found")
+    const updatedData = await User.findOneAndUpdate({emailId :emailId},req.body,{ returnDocument: 'after' })
     console.log(updatedData);
     
     res.send("User updated successfully ", updatedData)
     } catch(err) {
-        res.status(400).send("Update operation failed")
+        res.status(400).send("Update operation failed " + err.message)
     }
 })
 
 app.post("/signup" , async(req , res) => {
+    // Creating an instance of a model .
      const users = new User(req.body)
     
 try {
 await users.save()
 res.send("User added successfully !")
 } catch(err){
-    res.status(400).send("Something Went wrong")
+    res.status(400).send("Something Went wrong " + err.message)
 }
 })
 
