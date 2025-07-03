@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
         type : String ,
         required : true,
         match : /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
-        maxLength : 24
+        
     },
     gender : {
         type : String , 

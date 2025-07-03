@@ -1,9 +1,10 @@
 
 const express = require("express")
-
+const bcrypt = require("bcrypt")
 const app = express()
 const ConnectDB = require("./config/database")
 const User = require("./models/user")
+const { validate } = require("./utils/validate")
 
 // We want to fetch the data from the api (POST) through Postman , we need to parse it to JS Object
 app.use(express.json())
@@ -77,15 +78,44 @@ app.patch("/user/:emailId", async(req,res) => {
     }
 })
 
-app.post("/signup" , async(req , res) => {
-    // Creating an instance of a model .
-     const users = new User(req.body)
+app.post("/login",async(req,res) => {
+    try {
+    const userDocument = await User.findOne({emailId : req.body.emailId})
+    console.log(userDocument);
     
+       
+    const {password} = userDocument;
+    const isPasswordValid = await bcrypt.compare(req.body.password,password )
+    if(isPasswordValid) res.send("Welcome Back " + userDocument.firstName)
+        else throw new Error("Invalid Password")
+    
+    }catch(err){
+        res.status(400).send("Login failed: " + err.message)}
+})
+
+
+app.post("/signup" , async(req , res) => {
+    //Validating the request body
+        
 try {
+    validate(req)
+    // Encrypting Passwords
+        const passwordHash = await bcrypt.hash(req.body.password, 10)
+    const { firstName, lastName, emailId } = req.body;
+    // Creating an instance of a model .
+    //Posting the req.body direct to the database
+     const users = new User({
+        firstName,
+        lastName,
+        emailId,
+        password : passwordHash
+     })
+
+
 await users.save()
 res.send("User added successfully !")
 } catch(err){
-    res.status(400).send("Something Went wrong " + err.message)
+    res.status(400).send("Error:" + err.message)
 }
 })
 
