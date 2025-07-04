@@ -5,10 +5,13 @@ const app = express()
 const ConnectDB = require("./config/database")
 const User = require("./models/user")
 const { validate } = require("./utils/validate")
-
+const cookies=  require("cookies")
+const cookieParser = require("cookie-parser")
+var jwt = require('jsonwebtoken');
+const { userAuth } = require("./middlewares/auth")
 // We want to fetch the data from the api (POST) through Postman , we need to parse it to JS Object
 app.use(express.json())
-
+app.use(cookieParser())
 
 
 
@@ -78,6 +81,16 @@ app.patch("/user/:emailId", async(req,res) => {
     }
 })
 
+app.post("/profile",userAuth,async(req,res) => {
+    try{
+   console.log("req.user");
+   
+    res.send(req.usersew)
+} catch(err) { 
+    res.status(400).send("Profile operation failed ")
+    }
+})
+
 app.post("/login",async(req,res) => {
     try {
     const userDocument = await User.findOne({emailId : req.body.emailId})
@@ -85,8 +98,16 @@ app.post("/login",async(req,res) => {
     
        
     const {password} = userDocument;
-    const isPasswordValid = await bcrypt.compare(req.body.password,password )
-    if(isPasswordValid) res.send("Welcome Back " + userDocument.firstName)
+    const isPasswordValid = userDocument.validatePassword(req.body.password)
+    if(isPasswordValid){
+        // create a jwt token and send it to the user
+        const token = await userDocument.getJWT()
+        console.log(token);
+        //we will wrap the jwt in a cookie and send it to the user
+   
+         res.cookie("token",token)
+         res.send("Welcome Back " + userDocument.firstName)
+    }
         else throw new Error("Invalid Password")
     
     }catch(err){
@@ -100,8 +121,8 @@ app.post("/signup" , async(req , res) => {
 try {
     validate(req)
     // Encrypting Passwords
-        const passwordHash = await bcrypt.hash(req.body.password, 10)
-    const { firstName, lastName, emailId } = req.body;
+        const passwordHash = await bcrypt.hash(req.body.password, 10) 
+        const { firstName, lastName, emailId } = req.body;
     // Creating an instance of a model .
     //Posting the req.body direct to the database
      const users = new User({
