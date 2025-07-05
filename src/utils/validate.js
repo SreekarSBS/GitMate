@@ -11,4 +11,9 @@ const validate = (req) => {
         throw new Error("Please enter a Strong Password")
 }
 
-module.exports  = {validate}
+const validateUserUpdateRequest = (req) => {
+    const ALLOWED_UPDATES = ['firstName', 'lastName', 'password'];
+    return Object.keys(req.body).every((field) => ALLOWED_UPDATES.includes(field))
+}
+
+module.exports  = {validate , validateUserUpdateRequest}

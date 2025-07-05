@@ -47,10 +47,11 @@ const userSchema = new mongoose.Schema({
 
 userSchema.methods.getJWT = async function(){
     const userDocument = this;
-    await jwt.sign({_id : userDocument._id},"DEV@Tinder$790")
+    const jwtt = await jwt.sign({_id : userDocument._id},"DEV@Tinder$790")
+    return jwtt
 }
 
-userSchema.methods.validatePassword =  async function(passwordInputByUser){
+userSchema.methods.validatePassword = async function(passwordInputByUser){
     const userDocument = this;
     const password = userDocument.password;
     const isPasswordValid = await bcrypt.compare(passwordInputByUser,password )

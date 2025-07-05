@@ -5,6 +5,11 @@ const User = require("../models/user")
 const cookies=  require("cookies")
 const { validate } = require("../utils/validate")
 
+authRouter.post("/logout", async(req,res) => {
+    res.cookie("token",null).send("Logged out successfully")
+})
+
+
 authRouter.post("/login",async(req,res) => {
     try {
     const userDocument = await User.findOne({emailId : req.body.emailId})
@@ -12,7 +17,7 @@ authRouter.post("/login",async(req,res) => {
     
        
     const {password} = userDocument;
-    const isPasswordValid = userDocument.validatePassword(req.body.password)
+    const isPasswordValid = await userDocument.validatePassword(req.body.password)
     if(isPasswordValid){
         // create a jwt token and send it to the user
         const token = await userDocument.getJWT()
@@ -53,6 +58,8 @@ res.send("User added successfully !")
     res.status(400).send("Error:" + err.message)
 }
 })
+
+
 
 module.exports = {
     authRouter

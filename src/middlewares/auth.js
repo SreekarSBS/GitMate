@@ -13,15 +13,15 @@ const userAuth = async(req,res,next) => {
     const {_id} = decodedObj;
 
     const userDocument = await User.findById(_id);
-    console.log("User document is herer " + userDocument) ;
+    console.log("User document is here " + userDocument) ;
     
     if(!userDocument)  throw new Error("User not found");
      
-    req.usersew = userDocument;
+    req.user = userDocument;
     console.log("User authenticated successfully");
     next()
 }catch(err) {
-    res.status(400).send("Authentication failed: " );
+    res.status(400).send("Authentication failed: "+ err.message);
     }
 }
 
