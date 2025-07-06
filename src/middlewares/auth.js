@@ -8,7 +8,7 @@ const userAuth = async(req,res,next) => {
    if(!token) throw new Error("Please Login to continue")
 
     // if not, fetch the id to check the database
-    const decodedObj = await jwt.verify(token, "DEV@Tinder$790",{expiresIn: '1d'});
+    const decodedObj = jwt.verify(token, "DEV@Tinder$790",{expiresIn: '1d'});
 
     const {_id} = decodedObj;
 

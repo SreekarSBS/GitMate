@@ -9,17 +9,25 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res) =>{
         const fromUserId = req.user._id;
         const toUserId = req.params.toUserId;
         const status  = req.params.status
+        if(fromUserId == toUserId) throw new Error ("You cannot send a connection request to yourself")
         const validStatuses = ["ignored", 'interested'];
         if(!validStatuses.includes(status)) throw new Error ("Please provide some status Invalid : " + status)
             const toUserDocument = await User.findById(toUserId)
-        if(!toUserDocument._id) throw new Error ("Invalid User ID")
+        if(!toUserDocument) throw new Error ("Invalid User ID")
         //Create a new instance of the connectionRequestModel 
         const connectionRequest = new ConnectionRequest({
             fromUserId,
             toUserId,
             status
         })
-        const isAlreadyRequested = await ConnectionRequest.findOne({toUserId,fromUserId})
+        const isAlreadyRequested = await ConnectionRequest.findOne(
+           {
+             $or :[
+                {toUserId,fromUserId},
+                {toUserId : fromUserId,fromUserId : toUserId},
+            ],
+        }
+        )
         if(isAlreadyRequested) throw new Error("Connection Request already sent to this user")
         const resMessage  = status == "interested" && "Connection Request Sent successfully to "
         || status == "ignored" && "Connection Request Ignored successfully from "

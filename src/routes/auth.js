@@ -6,9 +6,6 @@ const cookies=  require("cookies")
 const { validate } = require("../utils/validate")
 const { userAuth } = require('../middlewares/auth')
 
-authRouter.post("/logout", async(req,res) => {
-    res.cookie("token",null,{expires : new Date(Date.now())}).send("Logged out successfully")
-})
 
 
 authRouter.post("/login", async(req,res) => {
@@ -19,17 +16,19 @@ authRouter.post("/login", async(req,res) => {
     if(!userDocument) throw new Error("User not found with this emailId")
        
     const {password} = userDocument;
-    const isPasswordValid = await userDocument.validatePassword(req.body.password)
-    if(isPasswordValid){
+    const isPasswordValid = await userDocument.validatePassword(req.body.password);
+
+  
+    if(isPasswordValid === false) throw new Error("Invalid Password")
         // create a jwt token and send it to the user
-        const token = await userDocument.getJWT()
+        const token = userDocument.getJWT()
         console.log(token);
         //we will wrap the jwt in a cookie and send it to the user
    
          res.cookie("token",token)
          res.send("Welcome Back " + userDocument.firstName)
-    }
-        else throw new Error("Invalid Password")
+    
+        // else throw new Error("Invalid Password")
     
     }catch(err){
         res.status(400).send("Login failed: " + err.message)}
@@ -50,7 +49,7 @@ try {
         firstName,
         lastName,
         emailId,
-        password : passwordHash
+       password : passwordHash
      })
 
 
@@ -59,6 +58,10 @@ res.send("User added successfully !")
 } catch(err){
     res.status(400).send("Error:" + err.message)
 }
+})
+
+authRouter.post("/logout",(req,res) => {
+    res.cookie("token",null,{expires : new Date(Date.now())}).send("Logged out successfully")
 })
 
 

@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
         unique : true,
         lowercase : true,
         trim : true,
-        match : /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+        // match : /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
        validate(value){
         if(!validator.isEmail(value)) throw new Error("Invalid email format")
         }
@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     password : {
         type : String ,
         required : true,
-        match : /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+        // match : /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
         
     },
     gender : {
@@ -45,20 +45,31 @@ const userSchema = new mongoose.Schema({
 }
 )
 
-userSchema.methods.getJWT = async function(){
+userSchema.methods.getJWT = function(){
     const userDocument = this;
-    const jwtt = await jwt.sign({_id : userDocument._id},"DEV@Tinder$790")
+    const jwtt =  jwt.sign({_id : userDocument._id},"DEV@Tinder$790")
     return jwtt
 }
 
 userSchema.methods.validatePassword = async function(passwordInputByUser){
     const userDocument = this;
-    const password = userDocument.password;
-    const isPasswordValid = await bcrypt.compare(passwordInputByUser,password )
+    
 
+    const isPasswordValid = await bcrypt.compare(passwordInputByUser,userDocument.password )
+
+    console.log(`Password validation result: ${isPasswordValid}`);
+    
     return isPasswordValid;
 }
 
+// userSchema.pre("save", async function (next) {
+//     if (this.isModified("password")) {
+//         this.password = await bcrypt.hash(this.password, 10);
+//     }
+//     next();
+// });
+
+userSchema.index({firstName : 1 , lastName : 1})
 
 const User = mongoose.model("User",userSchema)
 
