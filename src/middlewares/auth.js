@@ -12,7 +12,7 @@ const userAuth = async(req,res,next) => {
 
     const {_id} = decodedObj;
 
-    const userDocument = await User.findById(_id);
+    const userDocument = await User.findById(_id); 
     console.log("User document is here " + userDocument) ;
     
     if(!userDocument)  throw new Error("User not found");

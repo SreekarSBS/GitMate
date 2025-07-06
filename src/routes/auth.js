@@ -4,17 +4,19 @@ const authRouter = express.Router()
 const User = require("../models/user")
 const cookies=  require("cookies")
 const { validate } = require("../utils/validate")
+const { userAuth } = require('../middlewares/auth')
 
 authRouter.post("/logout", async(req,res) => {
-    res.cookie("token",null).send("Logged out successfully")
+    res.cookie("token",null,{expires : new Date(Date.now())}).send("Logged out successfully")
 })
 
 
-authRouter.post("/login",async(req,res) => {
+authRouter.post("/login", async(req,res) => {
     try {
+        // if(req.user) throw new Error("Please logout " + req.user.firstName + " to login again")
     const userDocument = await User.findOne({emailId : req.body.emailId})
     console.log(userDocument);
-    
+    if(!userDocument) throw new Error("User not found with this emailId")
        
     const {password} = userDocument;
     const isPasswordValid = await userDocument.validatePassword(req.body.password)
