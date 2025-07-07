@@ -1,67 +1,62 @@
-const express = require('express')
-const userRouter = express.Router()
-const User = require("../models/user")
-const cookies=  require("cookies")
+const express = require("express")
+const { userAuth } = require("../middlewares/auth");
+const ConnectionRequest = require("../models/connectionRequest");
+const { rawListeners } = require("../models/user");
 
-app.get("/user", async (req,res) => {
-    const userEmailId = req.body.emailId
-try{
-    const userDocument = await User.find({emailId : userEmailId})
-    if(userDocument.length === 0 ) return res.status(404).send("User not found")
-    res.send(userDocument)
-}catch(err){
-    res.status(400).send("Something went wrong")
+const userRouter = express.Router()
+
+// get all the pending requests from the users
+userRouter.get("/user/requests/received",userAuth,async(req,res) => {
+    try{
+    const loggedInUser = req.user;
+
+    const connectionrequest = await ConnectionRequest.find({
+        toUserId : loggedInUser._id,
+        status : "interested"
+    }).populate("fromUserId" , "firstName lastName")
+       if(!connectionrequest || connectionrequest.length == 0) throw new Error ("No connection requests found for the user " + loggedInUser.firstName) 
+        res.json({
+            message : "Successfully fetched the connection requests received",
+            data : connectionrequest
+        })
+    }catch(err){
+        res.status(401).json({
+        message : "Failed to fetch the requests " + err.message
+        })
+    }
+})
+
+userRouter.get("/user/connections",userAuth,async(req,res) => {
+    try {
+    const loggedInUser = req.user
+    if(!loggedInUser) throw new Error("Please Login to continue")
+    // Find all the connections inwhich toUserId is mine , and status is accepted
+
+    const connectionrequests = await ConnectionRequest.find({
+        
+        $or : [
+            {fromUserId : loggedInUser._id , status : "accepted"},
+            {toUserId : loggedInUser._id , status : "accepted"}
+        ]
+        
+    }).populate("toUserId", "firstName lastName").populate("fromUserId", "firstName lastName")
+    
+      if(!connectionrequests || connectionrequests.length === 0) throw new Error("No connections found for the user " + loggedInUser.firstName)
+    
+      
+        res.json({
+            message : "Successfully fetched the connections",
+            data : connectionrequests
+        })
+           
+
+} catch(err){
+    res.status(401).json({
+        message : "Failed to fetch the connections " + err.message
+    })
 }
 })
 
-app.patch("/user/:emailId", async(req,res) => {
-    try {
-     const userDocument = req.body;
-     const emailId = req.params?.emailId
-     const ALLOWED_UPDATES = [
-         "firstName",
-         "lastName",
-         "age",
-         'photoURL',
-         'password'
-     ]
-     if(!Object.keys(userDocument).every(k => ALLOWED_UPDATES.includes(k))) throw new Error("Invalid update fields")
- 
- 
-     if(!emailId) return res.status(404).send("User not found")
-     const updatedData = await User.findOneAndUpdate({emailId :emailId},req.body,{ returnDocument: 'after'  , runValidators: true});
-     console.log(updatedData);
-     
-     res.send("User updated successfully ", updatedData)
-     } catch(err) {
-         res.status(400).send("Update operation failed " + err.message)
-     }
- })
-
-app.patch("/user", async(req,res) => {
-    try{
-        const userDocument = req.body;
-        if(!userDocument.userId) return res.status(400).send("User ID is required")
-        const updatedData = await User.findByIdAndUpdate(userDocument.userId,userDocument);
-        res.send("User updated successfully ",updatedData)
-    }   catch(err) {   
-        res.status(400).send("Update operation failed")
-    }
-})
-
-
-
-app.delete("/user", async(req,res) => {
-    try{
-    const userId = req.body.userId;
-    if(!userId) return res.status(400).send("User ID is required")
-    await User.findByIdAndDelete(userId);
-res.send("User deleted successfully")
-    } catch(err) {
-        res.status(400).send("Delete operation failed")
-    }
-})
-
 module.exports = {
-    userRouter 
+    userRouter
 }

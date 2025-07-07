@@ -4,6 +4,38 @@ const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 const requestRouter = express.Router();
 
+requestRouter.post("/request/review/:status/:requestId", userAuth,async(req,res) => {
+        // Validate the user , and status
+        try{
+            const fromUserId = req.user._id;
+            const toUserId = req.params.requestId
+            const sentStatus = req.params.status
+             // Check if toUserId is valid or not
+              const toUserDocument = await User.findById(toUserId)
+            if(!toUserDocument) throw new Error ("Invalid User ID")
+            if(toUserId == fromUserId) throw new Error ("You cannot review your own connection request")
+            const validStatuses = ['accepted', 'rejected']
+        if(!validStatuses.includes(sentStatus)) throw new Error ("The status provided is invalid , You can either accept or reject the request")
+            // Check if the connection request exists
+        
+            const connectionRequest = await ConnectionRequest.findOne({
+                fromUserId : toUserId,
+                toUserId : fromUserId,
+                status : "interested"
+            })
+            if(!connectionRequest) throw new Error ("Connection Request not found or already reviewed")
+            // Update the status of the connection request
+            connectionRequest.status = sentStatus;
+            await connectionRequest.save()
+            res.send("Successfully " + sentStatus + " the connection request from " + toUserDocument.firstName)
+        }catch(err){
+            res.status(401).json({
+               message : "Unauthorized : " + err.message
+               
+            })
+        }
+})
+
 requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res) =>{
     try{
         const fromUserId = req.user._id;
@@ -41,5 +73,7 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res) =>{
         res.status(400).send("Failed to send a connection Request : " + err.message)
     }
 })
+
+
 
 module.exports = {requestRouter}
