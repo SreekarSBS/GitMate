@@ -43,10 +43,13 @@ userRouter.get("/user/connections",userAuth,async(req,res) => {
     
       if(!connectionrequests || connectionrequests.length === 0) throw new Error("No connections found for the user " + loggedInUser.firstName)
     
-      
+      const filteredConnections = connectionrequests.map((row) => {
+        if(row.toUserId._id === loggedInUser._id) return row.toUserId
+        else return row.fromUserId
+      })
         res.json({
             message : "Successfully fetched the connections",
-            data : connectionrequests
+            data : filteredConnections
         })
            
 
