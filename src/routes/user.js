@@ -64,9 +64,16 @@ userRouter.get("/user/connections",userAuth,async(req,res) => {
 
 userRouter.get("/user/feed",userAuth ,async(req,res) => {
     try {
+
+
     const loggedInUser = req.user 
     if(!loggedInUser) throw new Error ("Please Login to continue ")
      
+    let limit= parseInt(req.query.limit) || 10
+    limit  > 50 ? 50 : limit
+    const page = parseInt(req.query.page) || 1
+    const skip = (page-1)*limit
+
     const notFeedData = await ConnectionRequest.find({
         $or : [
           { fromUserId : loggedInUser._id },
@@ -87,7 +94,7 @@ userRouter.get("/user/feed",userAuth ,async(req,res) => {
         {_id : {$nin : Array.from(filteredConnections)}},
         {_id :{ $ne : loggedInUser._id } }
        ]
-     }).select(USER_SAFE_DATA)
+     }).select(USER_SAFE_DATA).skip(skip).limit(limit)
     
     // We have to find the user cards in which the connection requests of toUserId and fromuserId must not be of the loggedInUser
     // Find in users - ids that are not in notFeedData.
