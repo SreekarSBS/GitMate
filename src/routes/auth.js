@@ -7,6 +7,24 @@ const { validate } = require("../utils/validate")
 const { userAuth } = require('../middlewares/auth')
 
 
+authRouter.post("/status",async(req,res) => {
+    // Find if the user is in the database or not , but how
+    try{
+    const userEmailId = req.body.emailId;
+    console.log(userEmailId);
+    
+    if(!userEmailId) throw new Error("Email Id invalid")
+        // No need to validate the emailId again , if at all it is present in the Databaase just return it.
+    const isEmailPresent = await User.find({emailId : userEmailId})
+    console.log(isEmailPresent)
+    if(!isEmailPresent || isEmailPresent.length === 0) res.send(false)
+    else res.send(true)
+    }catch(err){
+        res.status(401).send("Status Check Failed : " + err.message)
+}
+    
+})
+
 
 authRouter.post("/login", async(req,res) => {
     try {
@@ -26,8 +44,11 @@ authRouter.post("/login", async(req,res) => {
         //we will wrap the jwt in a cookie and send it to the user
    
          res.cookie("token",token)
-         res.send("Welcome Back " + userDocument.firstName)
-    
+         
+        res.json({
+            message : "Welcome Back " + userDocument.firstName,
+            data : userDocument
+        })
         // else throw new Error("Invalid Password")
     
     }catch(err){
