@@ -33,6 +33,7 @@ const userSchema = new mongoose.Schema({
     },
     photoURL :{
         type : String ,
+        default : "https://www.webwise.ie/wp-content/uploads/2020/12/IMG1207.jpg",
        validate(value){
             if(!validator.isURL(value)){
                 throw new Error("Invalid URL format")
