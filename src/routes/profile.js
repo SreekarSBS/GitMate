@@ -5,11 +5,16 @@ const { userAuth } = require("../middlewares/auth");
 const User = require('../models/user');
 const { validateUserUpdateRequest } = require('../utils/validate');
 
-profileRouter.post("/profile/view",userAuth,async(req,res) => {
+profileRouter.get("/profile/view",userAuth,async(req,res) => {
     try{
-   console.log("req.user");
-   
-    res.send(req.user)
+        
+        if(!req.user) res.status(401).send("User not found")
+            console.log(req.user);
+            
+    res.json({
+        message : "Welcome Back " + req.user.firstName,
+      data:  req.user
+    })
 } catch(err) { 
     res.status(400).send("Profile operation failed ")
     }
