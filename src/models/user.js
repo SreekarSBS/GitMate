@@ -28,17 +28,27 @@ const userSchema = new mongoose.Schema({
     },
     gender : {
         type : String , 
-        enum : ["other","male","female","m","f"],
+        enum :{
+            values : ["other","male","female","m","f"],
+            message : `{VALUE} is not a valid gender type`
+        },
         lowercase : true,
     },
     photoURL :{
         type : String ,
-        default : "https://www.webwise.ie/wp-content/uploads/2020/12/IMG1207.jpg",
+        default : "https://winaero.com/blog/wp-content/uploads/2017/12/User-icon-256-blue.png",
        validate(value){
             if(!validator.isURL(value)){
                 throw new Error("Invalid URL format")
             }
         }
+    },
+    age : {
+        type : Number,
+        min : 18
+    },
+    skills : {
+        type : [String]
     }
 },
 {

@@ -5,7 +5,7 @@ const { rawListeners } = require("../models/user");
 const User = require("../models/user");
 
 const userRouter = express.Router()
-const USER_SAFE_DATA = "firstName lastName photoUrl age gender about skils"
+const USER_SAFE_DATA = "firstName lastName photoURL age gender about skils"
 // get all the pending requests from the users
 userRouter.get("/user/requests/received",userAuth,async(req,res) => {
     try{
@@ -70,7 +70,7 @@ userRouter.get("/user/feed",userAuth ,async(req,res) => {
     if(!loggedInUser) throw new Error ("Please Login to continue ")
      
     let limit= parseInt(req.query.limit) || 10
-    limit  > 50 ? 50 : limit
+    limit = limit > 50 ? 50 : limit
     const page = parseInt(req.query.page) || 1
     const skip = (page-1)*limit
 
@@ -83,8 +83,8 @@ userRouter.get("/user/feed",userAuth ,async(req,res) => {
    
     const filteredConnections = new Set()
     notFeedData.forEach(req => {
-        filteredConnections.add(req.fromUserId.toString())
-        filteredConnections.add(req.toUserId.toString())
+       if(req.fromUserId) filteredConnections.add(req.fromUserId.toString())
+       if(req.toUserId) filteredConnections.add(req.toUserId.toString())
     });
 
     
