@@ -29,6 +29,7 @@ authRouter.post("/status",async(req,res) => {
 authRouter.post("/login", async(req,res) => {
     try {
         // if(req.user) throw new Error("Please logout " + req.user.firstName + " to login again")
+        if(!req.body.emailId || !req.body.password) throw new Error("Please enter valid credentials")
     const userDocument = await User.findOne({emailId : req.body.emailId})
     console.log(userDocument);
     if(!userDocument) throw new Error("User not found with this emailId")
