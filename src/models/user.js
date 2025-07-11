@@ -49,6 +49,16 @@ const userSchema = new mongoose.Schema({
     },
     skills : {
         type : [String]
+    },
+    about :  {
+        type : String,
+        minLength : 4,
+        maxLength : 50,
+        default : "Let's Git together"
+    },
+    location : {
+        type : String,
+        maxLength : 15
     }
 },
 {

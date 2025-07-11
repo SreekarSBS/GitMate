@@ -64,15 +64,32 @@ try {
     validate(req)
     // Encrypting Passwords
         const passwordHash = await bcrypt.hash(req.body.password, 10) 
-        const { firstName, lastName, emailId } = req.body;
+        const {
+            firstName,
+            lastName,
+            emailId,
+            gender,
+            photoURL,
+            age,
+            skills,
+            about,
+            location
+          } = req.body;
+          
     // Creating an instance of a model .
     //Posting the req.body direct to the database
-     const users = new User({
+    const users = new User({
         firstName,
         lastName,
         emailId,
-       password : passwordHash
-     })
+        password: passwordHash,
+        gender,
+        photoURL,
+        age,
+        skills,
+        about,
+        location
+      });
 
 
 await users.save()
