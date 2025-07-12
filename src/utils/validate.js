@@ -12,7 +12,7 @@ const validate = (req) => {
 }
 
 const validateUserUpdateRequest = (req) => {
-    const ALLOWED_UPDATES = ['firstName', 'lastName', 'password' , 'photoURL'];
+    const ALLOWED_UPDATES = ['firstName', 'lastName', 'password' , 'photoURL', 'about' , 'skills', 'location' , 'gender' , 'age'];
     return Object.keys(req.body).every((field) => ALLOWED_UPDATES.includes(field))
 }
 
