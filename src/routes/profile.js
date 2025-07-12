@@ -20,7 +20,7 @@ profileRouter.get("/profile/view",userAuth,async(req,res) => {
     }
 })
 
-profileRouter.patch("/profile/edit",userAuth,async(req,res) => {
+profileRouter.put("/profile/edit",userAuth,async(req,res) => {
     try {
        
        if(!validateUserUpdateRequest(req)){
@@ -30,7 +30,7 @@ profileRouter.patch("/profile/edit",userAuth,async(req,res) => {
 
        Object.keys(req.body).forEach((key) => loggedInUser[key] = req.body[key]);
      console.log("Updated user data: ", loggedInUser);
-     res.send("Profile updated successfully !" + loggedInUser)
+     
 
      await loggedInUser.save()
      res.json({
@@ -38,7 +38,7 @@ profileRouter.patch("/profile/edit",userAuth,async(req,res) => {
         data : loggedInUser
      })
     } catch(err){
-        res.status(400).send("Profile update failed : " + err.message)
+       return res.status(400).send("Profile update failed : " + err.message)
     }
 
 })
