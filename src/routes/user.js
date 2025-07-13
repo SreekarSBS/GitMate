@@ -14,7 +14,7 @@ userRouter.get("/user/requests/received",userAuth,async(req,res) => {
     const connectionrequest = await ConnectionRequest.find({
         toUserId : loggedInUser._id,
         status : "interested"
-    }).populate("fromUserId" , "firstName lastName")
+    }).populate("fromUserId" , USER_SAFE_DATA)
        if(!connectionrequest || connectionrequest.length == 0) throw new Error ("No connection requests found for the user " + loggedInUser.firstName) 
         res.json({
             message : "Successfully fetched the connection requests received",
@@ -40,7 +40,7 @@ userRouter.get("/user/connections",userAuth,async(req,res) => {
             {toUserId : loggedInUser._id , status : "accepted"}
         ]
         
-    }).populate("toUserId", "firstName lastName").populate("fromUserId", "firstName lastName")
+    }).populate("toUserId", USER_SAFE_DATA).populate("fromUserId", USER_SAFE_DATA)
 
       if(!connectionrequests || connectionrequests.length === 0) throw new Error("No connections found for the user " + loggedInUser.firstName)
     
@@ -56,7 +56,7 @@ userRouter.get("/user/connections",userAuth,async(req,res) => {
            
 
 } catch(err){
-    res.status(401).json({
+    res.json({
         message : "Failed to fetch the connections " + err.message
     })
 }
