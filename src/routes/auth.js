@@ -44,7 +44,7 @@ authRouter.post("/login", async(req,res) => {
         console.log(token);
         //we will wrap the jwt in a cookie and send it to the user
    
-         res.cookie("token",token,{expires : new Date(Date.now()+23*60*60*1000)})
+         res.cookie("token",token,{expires : new Date(Date.now()+8 *60*60*1000)})
          
         res.json({
             message : "Welcome Back " + userDocument.firstName,
@@ -67,7 +67,7 @@ try {
         const {
             firstName,
             lastName,
-            emailId,
+            emailId, 
             gender,
             photoURL,
             age,
@@ -76,6 +76,7 @@ try {
             location
           } = req.body;
           
+          if(about === "")about = undefined
     // Creating an instance of a model .
     //Posting the req.body direct to the database
     const users = new User({
@@ -92,8 +93,16 @@ try {
       });
 
 
-await users.save()
-res.send("User added successfully !")
+ const savedUser  = await users.save()
+ const token = savedUser.getJWT()
+ console.log(token);
+ //we will wrap the jwt in a cookie and send it to the user
+
+  res.cookie("token",token,{expires : new Date(Date.now()+8 *60*60*1000)})
+res.json({
+    message :"User added successfully !",
+    data : savedUser
+})
 } catch(err){
     res.status(400).send("Error:" + err.message)
 }

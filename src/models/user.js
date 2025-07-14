@@ -53,7 +53,7 @@ const userSchema = new mongoose.Schema({
     },
     about :  {
         type : String,
-        minLength : 4,
+       
         maxLength : 50,
         default : "Let's Git together"
     },

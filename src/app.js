@@ -14,7 +14,7 @@ const cookieParser = require("cookie-parser")
 
 // We want to fetch the data from the api (POST) through Postman , we need to parse it to JS Object
 app.use(cors({
-    origin : "http://localhost:5173/",
+    origin : "http://localhost:5173",
     credentials : true,
   
 })) 
