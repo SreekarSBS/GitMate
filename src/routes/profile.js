@@ -20,6 +20,26 @@ profileRouter.get("/profile/view",userAuth,async(req,res) => {
     }
 })
 
+profileRouter.get("/profile/view/:userId",userAuth,async(req,res) => {
+    try{
+        
+        if(!req.user) return res.status(401).send("User not found")
+            console.log(req.user);
+        const userId = req.params.userId;
+        if(!userId) throw new Error("User not found")
+        const userDocument  =await User.findById({_id : userId})
+        if(!userDocument) throw new Error ("User not found");
+            
+    res.json({
+        message : "User found: " + userDocument.firstName,
+      data:  userDocument
+    })
+} catch(err) { 
+    res.status(400).send("Profile operation failed ")
+    }
+})
+
+
 profileRouter.put("/profile/edit",userAuth,async(req,res) => {
     try {
        
