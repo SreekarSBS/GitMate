@@ -44,7 +44,7 @@ authRouter.post("/login", async(req,res) => {
         console.log(token);
         //we will wrap the jwt in a cookie and send it to the user
    
-         res.cookie("token",token,{expires : new Date(Date.now()+8 *60*60*1000)})
+         res.cookie("token",token,{domain: "54.79.4.212", expires : new Date(Date.now()+8 *60*60*1000)})
          
         res.json({
             message : "Welcome Back " + userDocument.firstName,
