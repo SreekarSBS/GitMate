@@ -12,9 +12,14 @@ const {requestRouter} = require('./routes/request')
 const cookieParser = require("cookie-parser")
 
 
+const allowedOrigins = [
+    "http://localhost:5173",
+    "http://54.79.4.212" // 👈 Add this!
+  ];
+
 // We want to fetch the data from the api (POST) through Postman , we need to parse it to JS Object
 app.use(cors({
-    origin : "http://localhost:5173",
+    origin : allowedOrigins,
     credentials : true,
   
 })) 
