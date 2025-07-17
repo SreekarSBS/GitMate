@@ -44,15 +44,7 @@ authRouter.post("/login", async(req,res) => {
         console.log(token);
         //we will wrap the jwt in a cookie and send it to the user
    
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: false, // change to true only if you're using HTTPS
-            sameSite: "Lax", // or "None" if frontend & backend are on different subdomains
-            domain: "54.79.4.212",
-            path: "/",
-            maxAge: 8 * 60 * 60 * 1000
-          });
-          
+         res.cookie("token",token,{expires : new Date(Date.now()+8 *60*60*1000)})
          
         res.json({
             message : "Welcome Back " + userDocument.firstName,
@@ -106,15 +98,7 @@ try {
  console.log(token);
  //we will wrap the jwt in a cookie and send it to the user
 
- res.cookie("token", token, {
-    httpOnly: true,
-    secure: false, // change to true only if you're using HTTPS
-    sameSite: "Lax", // or "None" if frontend & backend are on different subdomains
-    domain: "54.79.4.212",
-    path: "/",
-    maxAge: 8 * 60 * 60 * 1000
-  });
-  
+  res.cookie("token",token,{expires : new Date(Date.now()+8 *60*60*1000)})
 res.json({
     message :"User added successfully !",
     data : savedUser
@@ -125,7 +109,7 @@ res.json({
 })
 
 authRouter.post("/logout",(req,res) => {
-    res.cookie("token",null,{domain: "54.79.4.212",expires : new Date(Date.now())}).send("Logged out successfully")
+    res.cookie("token",null,{expires : new Date(Date.now())}).send("Logged out successfully")
 })
 
 
