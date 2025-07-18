@@ -69,7 +69,7 @@ const userSchema = new mongoose.Schema({
 
 userSchema.methods.getJWT = function(){
     const userDocument = this;
-    const jwtt =  jwt.sign({_id : userDocument._id},"DEV@Tinder$790")
+    const jwtt =  jwt.sign({_id : userDocument._id},process.env.JWT_SECRET)
     return jwtt
 }
 

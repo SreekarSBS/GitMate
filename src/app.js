@@ -10,7 +10,7 @@ const { feedRouter}  = require('./routes/feed')
 const { profileRouter}  = require('./routes/profile')
 const {requestRouter} = require('./routes/request')
 const cookieParser = require("cookie-parser")
-
+require("dotenv").config()
 
 const allowedOrigins = [
     "http://localhost:5173",
