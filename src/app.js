@@ -3,6 +3,8 @@ const express = require("express")
 const cors = require("cors")
 const app = express()
 const ConnectDB = require("./config/database")
+require("dotenv").config()
+require("./utils/cronjob")
 
 const { userRouter } = require('./routes/user')
 const { authRouter}  = require('./routes/auth')
@@ -10,7 +12,7 @@ const { feedRouter}  = require('./routes/feed')
 const { profileRouter}  = require('./routes/profile')
 const {requestRouter} = require('./routes/request')
 const cookieParser = require("cookie-parser")
-require("dotenv").config()
+
 
 const allowedOrigins = [
     "http://localhost:5173",

@@ -65,11 +65,12 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res) =>{
         const resMessage  = status == "interested" && "Connection Request Sent successfully to "
         || status == "ignored" && "Connection Request Ignored successfully from "
 
-        const resEmail =   status === "interested" && `🚀 ${req.user.firstName + " " + req.user.lastName} sent a Connection request to ${toUserDocument.firstName + " " + toUserDocument.lastName} `
+        const body =   status === "interested" && `🚀 ${req.user.firstName + " " + req.user.lastName} sent a Connection request to ${toUserDocument.firstName + " " + toUserDocument.lastName} `
         || status === "ignored" &&  `🥲 ${req.user.firstName + " " + req.user.lastName} ignored ${toUserDocument.firstName + " " + toUserDocument.lastName} `
+        const sub = "Connection Requests received for User "
 
         const data = await connectionRequest.save();
-        const emailRes = await sendEmail.run(resEmail)
+        const emailRes = await sendEmail.run(sub,body)
         console.log(emailRes);
         
 
