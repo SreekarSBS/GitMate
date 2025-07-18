@@ -38,8 +38,8 @@ app.use("/",requestRouter)
 
 ConnectDB().then(() => {
     console.log("Connection estabilished");
-    app.listen(3000,() => {
-    console.log("Listening from Server port 3000");
+    app.listen(process.env.PORT,() => {
+    console.log("Listening from Server port " + process.env.PORT);
 })
    }).catch(err => {
    console.log("Database Connection failed ");

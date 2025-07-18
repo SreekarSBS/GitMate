@@ -3,6 +3,7 @@ const {userAuth} = require("../middlewares/auth")
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 const requestRouter = express.Router();
+const sendEmail = require("../utils/ses_sendEmail")
 
 requestRouter.post("/request/review/:status/:requestId", userAuth,async(req,res) => {
         // Validate the user , and status
@@ -64,7 +65,14 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res) =>{
         const resMessage  = status == "interested" && "Connection Request Sent successfully to "
         || status == "ignored" && "Connection Request Ignored successfully from "
 
+        const resEmail =   status == "interested" && `🚀 ${req.user.firstName + " " + req.user.lastName} sent a Connection request to ${toUserDocument.firstName + " " + toUserDocument.lastName} `
+        || status == "ignored" &&  `🥲 ${req.user.firstName + " " + req.user.lastName} ignored ${toUserDocument.firstName + " " + toUserDocument.lastName} `
+
         const data = await connectionRequest.save();
+        const emailRes = await sendEmail.run(resEmail)
+        console.log(emailRes);
+        
+
         res.json({
             message : resMessage + toUserDocument.firstName,
             data : data
