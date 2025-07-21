@@ -26,7 +26,7 @@ app.use(cors({
   
 })) 
 
-// app.set("trust proxy", 1); // if you're behind nginx or a cloud load balancer
+ app.set("trust proxy", 1); // if you're behind nginx or a cloud load balancer
 
 app.use(express.json())
 app.use(cookieParser())
