@@ -15,8 +15,8 @@ chatRouter.get("/chats/:targetUserId",userAuth ,async(req,res) => {
         const connectionrequests = await ConnectionRequest.find({
         
             $or : [
-                {userId : targetUserId , status : "accepted"} ,
-                {targetUserId : userId , status : "accepted"}
+                {fromUserId : targetUserId, toUserId : userId , status : "accepted"} ,
+                {fromUserId : userId,toUserId : targetUserId , status : "accepted"}
             ]
             
         })
