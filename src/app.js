@@ -11,6 +11,8 @@ const { authRouter}  = require('./routes/auth')
 const { feedRouter}  = require('./routes/feed')
 const { profileRouter}  = require('./routes/profile')
 const {requestRouter} = require('./routes/request')
+const { chatRouter}  = require('./routes/chat')
+
 const cookieParser = require("cookie-parser")
 
 const http = require("http")
@@ -42,6 +44,7 @@ app.use("/",authRouter)
 app.use("/",feedRouter) 
 app.use("/",profileRouter)
 app.use("/",requestRouter)
+app.use("/",chatRouter)
 
 ConnectDB().then(() => {
     console.log("Connection estabilished");

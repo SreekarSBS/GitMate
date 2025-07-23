@@ -1,5 +1,7 @@
 const socket = require("socket.io")
 const crypto = require("node:crypto")
+const Chat = require("../models/chat") 
+
 const initialiseSocket = (server) => {
 
     const getSecretRoomId = (userId,targetUserId) => {
@@ -22,12 +24,41 @@ const initialiseSocket = (server) => {
             
             socket.join(roomId)
         })
-        socket.on("sendMessage",({firstName,userId,targetUserId,text,photo}) => {
+        socket.on("sendMessage",async({firstName,userId,targetUserId,text,photo}) => {
             // add the message to the common room
             const roomId = getSecretRoomId(userId,targetUserId)
-            console.log(firstName +": " + text);
+            // save messages to the db
+            try {
+            let chat = await Chat.findOne({
+                participants : {
+                    $all: [
+                        userId,targetUserId
+                    ]
+                }
+
+
+            })
             
-            io.to(roomId).emit("messageReceived",{firstName,text,userId,photo})
+            if(!chat){
+                chat = new Chat({
+                    participants : [userId,targetUserId],
+                    messages : []
+                })
+            }
+
+            chat.messages.push({
+                senderId : userId,
+                text 
+            })
+            
+            await chat.save()
+
+            const newMessage = chat.messages[chat.messages.length - 1]
+
+            io.to(roomId).emit("messageReceived",{firstName,text,userId,photo,createdAt:newMessage.createdAt})
+            }catch(err){
+                console.log(err.message);
+            }
         })
         socket.on("disconnect",() => {})
     })
