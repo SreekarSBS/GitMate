@@ -30,7 +30,7 @@ chatRouter.get("/chats/:targetUserId",userAuth ,async(req,res) => {
             participants : [userId,targetUserId],
             messages : []
         })
-        await chat.save()
+        await chats.save()
     }
 
     console.log(chats);
