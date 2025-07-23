@@ -24,7 +24,7 @@ const initialiseSocket = (server) => {
             
             socket.join(roomId)
         })
-        socket.on("sendMessage",async({firstName,userId,targetUserId,text,photo}) => {
+        socket.on("sendMessage",async({firstName,userId,targetUserId,text,photoURL}) => {
             // add the message to the common room
             const roomId = getSecretRoomId(userId,targetUserId)
             // save messages to the db
@@ -55,7 +55,7 @@ const initialiseSocket = (server) => {
 
             const newMessage = chat.messages[chat.messages.length - 1]
 
-            io.to(roomId).emit("messageReceived",{firstName,text,userId,photo,createdAt:newMessage.createdAt})
+            io.to(roomId).emit("messageReceived",{firstName,text,userId,createdAt:newMessage.createdAt,photoURL,id:newMessage._id})
             }catch(err){
                 console.log(err.message);
             }
