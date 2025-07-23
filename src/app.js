@@ -13,6 +13,11 @@ const { profileRouter}  = require('./routes/profile')
 const {requestRouter} = require('./routes/request')
 const cookieParser = require("cookie-parser")
 
+const http = require("http")
+const initialiseSocket = require("./utils/socket")
+const server = http.createServer(app)
+
+initialiseSocket(server)
 
 const allowedOrigins = [
     "http://localhost:5173",
@@ -40,7 +45,7 @@ app.use("/",requestRouter)
 
 ConnectDB().then(() => {
     console.log("Connection estabilished");
-    app.listen(process.env.PORT,() => {
+    server.listen(process.env.PORT,() => {
     console.log("Listening from Server port " + process.env.PORT);
 })
    }).catch(err => {
