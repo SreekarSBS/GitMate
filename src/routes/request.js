@@ -3,7 +3,7 @@ const {userAuth} = require("../middlewares/auth")
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 const requestRouter = express.Router();
-const sendEmail = require("../utils/ses_sendEmail")
+// const sendEmail = require("../utils/ses_sendEmail")
 
 requestRouter.post("/request/review/:status/:requestId", userAuth,async(req,res) => {
         // Validate the user , and status
@@ -70,8 +70,8 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res) =>{
         const sub = "Connection Requests received for User "
 
         const data = await connectionRequest.save();
-        const emailRes = await sendEmail.run(sub,body)
-        console.log(emailRes);
+        //  const emailRes = await sendEmail.run(sub,body)
+        //  console.log(emailRes);
         
 
         res.json({
