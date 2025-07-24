@@ -5,18 +5,23 @@ const { userAuth } = require("../middlewares/auth");
 const User = require('../models/user');
 const { validateUserUpdateRequest } = require('../utils/validate');
 
-profileRouter.get("/profile/view",userAuth,async(req,res) => {
+profileRouter.get("/profile/view/:targetUserId",userAuth,async(req,res) => {
     try{
-        
-        if(!req.user) res.status(401).send("User not found")
+        const {targetUserId} = req.params
+        if(!req.user) res.status(401).send("Please Login to continue")
             console.log(req.user);
-            
+        if(!targetUserId) res.status(401).send("User not found")
+            console.log(req.user);
+        
+        const targetUser = await User.findById(targetUserId)
+        if(!targetUser) throw new Error(" targetUser not present in DB")
+
     res.json({
-        message : "Welcome Back " + req.user.firstName,
-      data:  req.user
+        message : "Welcome Back " + targetUser.firstName,
+      data:  targetUser
     })
 } catch(err) { 
-    res.status(400).send("Profile operation failed ")
+    res.status(400).send("Profile operation failed " + err.message)
     }
 })
 

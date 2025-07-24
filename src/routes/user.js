@@ -64,8 +64,6 @@ userRouter.get("/user/connections",userAuth,async(req,res) => {
 
 userRouter.get("/user/feed",userAuth ,async(req,res) => {
     try {
-
-
     const loggedInUser = req.user 
     if(!loggedInUser) throw new Error ("Please Login to continue ")
      
