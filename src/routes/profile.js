@@ -25,6 +25,24 @@ profileRouter.get("/profile/view/:targetUserId",userAuth,async(req,res) => {
     }
 })
 
+profileRouter.get("/profile/view/",userAuth,async(req,res) => {
+    try{
+       
+        if(!req.user) res.status(401).send("Please Login to continue")
+            console.log(req.user);
+        
+        
+        
+
+    res.json({
+        message : "Welcome Back " + req.user.firstName,
+      data:  req.user
+    })
+} catch(err) { 
+    res.status(400).send("Profile operation failed " + err.message)
+    }
+})
+
 profileRouter.get("/profile/view/:userId",userAuth,async(req,res) => {
     try{
         
