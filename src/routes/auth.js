@@ -63,6 +63,7 @@ authRouter.post("/signup" , async(req , res) => {
 try {
     validate(req)
     // Encrypting Passwords
+        
         const passwordHash = await bcrypt.hash(req.body.password, 10) 
         const {
             firstName,

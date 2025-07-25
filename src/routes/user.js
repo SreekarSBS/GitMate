@@ -68,7 +68,7 @@ userRouter.get("/user/feed",userAuth ,async(req,res) => {
     if(!loggedInUser) throw new Error ("Please Login to continue ")
      
     let limit= parseInt(req.query.limit) || 10
-    limit = limit > 50 ? 50 : limit
+    limit = limit > 100 ? 100 : limit
     const page = parseInt(req.query.page) || 1
     const skip = (page-1)*limit
 
