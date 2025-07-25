@@ -65,7 +65,7 @@ try {
     // Encrypting Passwords
         
         const passwordHash = await bcrypt.hash(req.body.password, 10) 
-        const {
+        let {
             firstName,
             lastName,
             emailId, 
